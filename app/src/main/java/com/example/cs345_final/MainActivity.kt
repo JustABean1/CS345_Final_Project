@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -149,19 +151,21 @@ class ClickerViewModel : ViewModel() {
 @Composable
 fun ClickerScreen(viewModel: ClickerViewModel) {
 
-    // Scaffold for screen structure
-    Scaffold(containerColor = Color(0xFF101820)) {
-        paddingValues ->
+    Scaffold(
+        containerColor = Color(0xFF101820)
+    ) { paddingValues ->
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(24.dp),
-            verticalArrangement = Arrangement.SpaceBetween,
+
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
+
+            // Currency display
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
@@ -169,20 +173,18 @@ fun ClickerScreen(viewModel: ClickerViewModel) {
                     containerColor = Color(0xFF1C2B36)
                 )
             ) {
+
                 Column(
                     modifier = Modifier.padding(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
-
-                    // Currency
                     Text(
                         text = "Currency: ${viewModel.currency}",
                         style = MaterialTheme.typography.headlineMedium,
                         color = Color.White
                     )
 
-                    // Passive income
                     Text(
                         text = "${viewModel.passiveUpgrade} / sec",
                         style = MaterialTheme.typography.titleLarge,
@@ -191,79 +193,151 @@ fun ClickerScreen(viewModel: ClickerViewModel) {
                 }
             }
 
-            // Button
+
+            Spacer(
+                modifier = Modifier.height(20.dp)
+            )
+
+
+            // Main click button
             Button(
-                onClick = {viewModel.addCurrency() },
+                onClick = { viewModel.addCurrency() },
+
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(130.dp),
+
                 shape = RoundedCornerShape(20.dp)
             ) {
-                Text("$ ${viewModel.valueUpgrade}")
+
+                Text(
+                    "$ ${viewModel.valueUpgrade}"
+                )
             }
 
-            // Click Upgrade
+
+            Spacer(
+                modifier = Modifier.height(20.dp)
+            )
+
+
+            // Upgrade section title
             Text(
                 text = "Upgrades",
                 style = MaterialTheme.typography.headlineSmall,
                 color = Color.White
             )
 
-            Button(
-                onClick = { viewModel.buyValueUpgrade() },
 
+            Spacer(
+                modifier = Modifier.height(10.dp)
+            )
+
+
+            // Scrollable upgrade list
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp),
+                    .weight(1f)
+                    .verticalScroll(
+                        rememberScrollState()
+                    ),
 
-                shape = RoundedCornerShape(20.dp)
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
+
+                // Click upgrade
+                Button(
+                    onClick = { viewModel.buyValueUpgrade() },
+
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(80.dp),
+
+                    shape = RoundedCornerShape(20.dp)
                 ) {
 
-                    Text(
-                        text = "Click Upgrade"
-                    )
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
 
-                    Text(
-                        text = "+${viewModel.valueUpgrade} per click"
-                    )
+                        Text("Click Upgrade")
 
-                    Text(
-                        text = "Cost: ${viewModel.valueCost}"
-                    )
+                        Text(
+                            "+${viewModel.valueUpgrade} per click"
+                        )
+
+                        Text(
+                            "Cost: ${viewModel.valueCost}"
+                        )
+                    }
                 }
-            }
 
 
-            // Passive Upgrade
-            Button(
-                onClick = { viewModel.buyPassiveUpgrade() },
+                Spacer(
+                    modifier = Modifier.height(15.dp)
+                )
 
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(60.dp),
 
-                shape = RoundedCornerShape(20.dp)
-            ) {
+                // Passive income upgrade
+                Button(
+                    onClick = { viewModel.buyPassiveUpgrade() },
 
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(80.dp),
+
+                    shape = RoundedCornerShape(20.dp)
                 ) {
 
-                    Text(
-                        text = "Passive Upgrade"
-                    )
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
 
-                    Text(
-                        text = "+${viewModel.passiveUpgrade} per second"
-                    )
+                        Text("Passive Upgrade")
 
-                    Text(
-                        text = "Cost: ${viewModel.passiveCost}"
-                    )
+                        Text(
+                            "+${viewModel.passiveUpgrade} per second"
+                        )
+
+                        Text(
+                            "Cost: ${viewModel.passiveCost}"
+                        )
+                    }
+                }
+
+
+                Spacer(
+                    modifier = Modifier.height(15.dp)
+                )
+
+
+                // Auto clicker upgrade
+                Button(
+                    onClick = { viewModel.buyAutoUpgrade() },
+
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(80.dp),
+
+                    shape = RoundedCornerShape(20.dp)
+                ) {
+
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+
+                        Text("Auto Clicker")
+
+                        Text(
+                            "Level: ${viewModel.autoClickerLevel}"
+                        )
+
+                        Text(
+                            "Cost: ${viewModel.autoCost}"
+                        )
+                    }
                 }
             }
         }
