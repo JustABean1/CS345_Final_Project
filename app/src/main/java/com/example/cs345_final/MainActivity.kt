@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -135,12 +136,17 @@ fun ClickerScreen(viewModel: ClickerViewModel) {
                 }
             }
 
+
+
             // Button
             Button(
                 onClick = {viewModel.addCurrency() },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(80.dp)
+                    .height(150.dp),
+
+                shape = RoundedCornerShape(30.dp)
+
             ) {
                 Text("$ ${viewModel.upgrade}")
             }
@@ -149,6 +155,12 @@ fun ClickerScreen(viewModel: ClickerViewModel) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
+                Text(
+                    text = "UPGRADES",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = Color.White
+                )
 
 
                 Button(
