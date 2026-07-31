@@ -147,6 +147,10 @@ class ClickerViewModel : ViewModel() {
         }
     }
 
+    fun calcIncome(): Int {
+        return ((5000/autoClickerLevel)/5*_valueUpgrade.value) + (passiveUpgrade)
+    }
+
 }
 
 @Composable
@@ -187,7 +191,7 @@ fun ClickerScreen(viewModel: ClickerViewModel) {
                     )
 
                     Text(
-                        text = "${viewModel.passiveUpgrade} / sec",
+                        text = "${viewModel.calcIncome()} / sec",
                         style = MaterialTheme.typography.titleLarge,
                         color = Color.Green
                     )
