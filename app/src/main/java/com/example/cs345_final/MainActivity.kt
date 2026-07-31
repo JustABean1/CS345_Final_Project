@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -34,6 +33,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.cs345_final.ui.theme.CS345_FinalTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.*
 
 class MainActivity : ComponentActivity() {
 
@@ -48,9 +48,10 @@ class MainActivity : ComponentActivity() {
                     ClickerScreen(viewModel)
                 }
             }
+
+                }
+            }
         }
-    }
-}
 
 class ClickerViewModel : ViewModel() {
 
@@ -58,25 +59,40 @@ class ClickerViewModel : ViewModel() {
     private var _currency = mutableStateOf(0)
     val currency: Int get() = _currency.value
 
-    // Click upgrade
-    private var _upgrade = mutableStateOf(1)
-    val upgrade: Int get() = _upgrade.value
+    private var _valueUpgrade = mutableStateOf(1)
+    private var _valueLevel = mutableStateOf(1)
+    private val _valueCostBase = mutableStateOf(5)
+    private val _valueMultiplier = mutableStateOf(3)
+    val valueUpgrade: Int get() = _valueUpgrade.value
+    val valueLevel: Int get() = _valueLevel.value
+    //cost of upgrading value is base*mult^number of upgrades
+    val valueCost: Int get() = (_valueCostBase.value * _valueMultiplier.value.toDouble().pow(_valueLevel.value)).toInt()
 
     // Passive Income upgrade
     private var _passiveupgrade = mutableStateOf(0)
+    private val _passiveCostBase = mutableStateOf(6)
+    private val _passiveMultiplier = mutableStateOf(4)
     val passiveUpgrade: Int get() = _passiveupgrade.value
+    //cost of upgrading passive is base*magic^number of upgrades
+    val passiveCost: Int get() = (_passiveCostBase.value * _passiveMultiplier.value.toDouble().pow(_passiveLevel.value)).toInt()
 
     init {
         startPassiveIncome()
     }
 
     fun addCurrency() {
-        _currency.value += _upgrade.value
+        _currency.value += _valueUpgrade.value
     }
-    fun buyUpgrade() {
-        _upgrade.value += 1
+    fun buyValueUpgrade() {
+        //if enough money, subtract the cost and then upgrade
+        if (_currency.value >= valueCost) {
+            _currency.value -= valueCost
+            _valueUpgrade.value += _valueUpgrade.value/10 + 1 //don't love leaving a magic number here but oh well
+            _valueLevel.value++
+        }
+
     }
-    fun butPassiveUpgrade() {
+    fun buyPassiveUpgrade() {
         _passiveupgrade.value += 1
     }
 
@@ -88,6 +104,7 @@ class ClickerViewModel : ViewModel() {
             }
         }
     }
+
 }
 
 @Composable
@@ -136,35 +153,27 @@ fun ClickerScreen(viewModel: ClickerViewModel) {
                 }
             }
 
-
-
             // Button
             Button(
                 onClick = {viewModel.addCurrency() },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(150.dp),
-
-                shape = RoundedCornerShape(30.dp)
-
+                    .height(80.dp)
             ) {
-                Text("$ ${viewModel.upgrade}")
+                Text("$ ${viewModel.valueUpgrade}")
             }
 
             // upgrades
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 Text(
-                    text = "UPGRADES",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = Color.White
+                    text = "upgrade: ${viewModel.valueUpgrade}",
+                    style = MaterialTheme.typography.titleLarge
                 )
 
-
                 Button(
-                    onClick = {viewModel.buyUpgrade()},
+                    onClick = {viewModel.buyValueUpgrade()},
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp)
@@ -174,7 +183,7 @@ fun ClickerScreen(viewModel: ClickerViewModel) {
                 }
 
                 Button(
-                    onClick = {viewModel.butPassiveUpgrade()},
+                    onClick = {viewModel.buyPassiveUpgrade()},
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp)
