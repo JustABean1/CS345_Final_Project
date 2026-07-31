@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,7 +25,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.cs345_final.ui.theme.CS345_FinalTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -39,24 +43,45 @@ class MainActivity : ComponentActivity() {
                     ClickerScreen(viewModel)
                 }
             }
-
-                }
-            }
         }
+    }
+}
 
 class ClickerViewModel : ViewModel() {
 
-    // Private mutable state
+    // Currency Amount
     private var _currency = mutableStateOf(0)
     val currency: Int get() = _currency.value
 
+    // Click upgrade
     private var _upgrade = mutableStateOf(1)
     val upgrade: Int get() = _upgrade.value
+
+    // Passive Income upgrade
+    private var _passiveupgrade = mutableStateOf(0)
+    val passiveUpgrade: Int get() = _passiveupgrade.value
+
+    init {
+        startPassiveIncome()
+    }
+
     fun addCurrency() {
         _currency.value += _upgrade.value
     }
     fun buyUpgrade() {
         _upgrade.value += 1
+    }
+    fun butPassiveUpgrade() {
+        _passiveupgrade.value += 1
+    }
+
+    private fun startPassiveIncome() {
+        viewModelScope.launch {
+            while (true) {
+                delay(1000)
+                _currency.value += _passiveupgrade.value
+            }
+        }
     }
 }
 
@@ -107,6 +132,22 @@ fun ClickerScreen(viewModel: ClickerViewModel) {
                         .padding(top = 16.dp)
                 ) {
                     Text("Buy Upgrade (+1/Click")
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // Passive upgrade
+                Text(
+                    text = "${viewModel.passiveUpgrade} / sec",
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Button(
+                    onClick = {viewModel.butPassiveUpgrade()},
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp)
+                ) {
+                    Text("Upgrade Passive (+1/Sec")
                 }
             }
 
