@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,7 +25,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.cs345_final.ui.theme.CS345_FinalTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.math.*
 
 class MainActivity : ComponentActivity() {
 
@@ -46,20 +51,54 @@ class MainActivity : ComponentActivity() {
 
 class ClickerViewModel : ViewModel() {
 
-    // Private mutable state
+    // Currency Amount
     private var _currency = mutableStateOf(0)
     val currency: Int get() = _currency.value
 
     private var _valueUpgrade = mutableStateOf(1)
+    private var _valueLevel = mutableStateOf(1)
+    private val _valueCostBase = mutableStateOf(5)
+    private val _valueMultiplier = mutableStateOf(3)
     val valueUpgrade: Int get() = _valueUpgrade.value
+    val valueLevel: Int get() = _valueLevel.value
+    //cost of upgrading value is base*mult^number of upgrades
+    val valueCost: Int get() = (_valueCostBase.value * _valueMultiplier.value.toDouble().pow(_valueLevel.value)).toInt()
 
+    // Passive Income upgrade
+    private var _passiveupgrade = mutableStateOf(0)
+    private val _passiveCostBase = mutableStateOf(6)
+    private val _passiveMultiplier = mutableStateOf(4)
+    val passiveUpgrade: Int get() = _passiveupgrade.value
+    //cost of upgrading passive is base*magic^number of upgrades
+    val passiveCost: Int get() = (_passiveCostBase.value * _passiveMultiplier.value.toDouble().pow(_passiveLevel.value)).toInt()
 
+    init {
+        startPassiveIncome()
+    }
 
     fun addCurrency() {
         _currency.value += _valueUpgrade.value
     }
     fun buyValueUpgrade() {
-        _valueUpgrade.value += 1
+        //if enough money, subtract the cost and then upgrade
+        if (_currency.value >= valueCost) {
+            _currency.value -= valueCost
+            _valueUpgrade.value += _valueUpgrade.value/10 + 1 //don't love leaving a magic number here but oh well
+            _valueLevel.value++
+        }
+
+    }
+    fun buyPassiveUpgrade() {
+        _passiveupgrade.value += 1
+    }
+
+    private fun startPassiveIncome() {
+        viewModelScope.launch {
+            while (true) {
+                delay(1000)
+                _currency.value += _passiveupgrade.value
+            }
+        }
     }
 
 }
@@ -111,6 +150,22 @@ fun ClickerScreen(viewModel: ClickerViewModel) {
                         .padding(top = 16.dp)
                 ) {
                     Text("Buy Upgrade (+1/Click")
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // Passive upgrade
+                Text(
+                    text = "${viewModel.passiveUpgrade} / sec",
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Button(
+                    onClick = {viewModel.buyPassiveUpgrade()},
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp)
+                ) {
+                    Text("Upgrade Passive (+1/Sec")
                 }
             }
 
