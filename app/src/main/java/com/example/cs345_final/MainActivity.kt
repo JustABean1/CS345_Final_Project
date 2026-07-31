@@ -141,7 +141,7 @@ class ClickerViewModel : ViewModel() {
     private fun startAuto() {
         viewModelScope.launch {
             while (true) {
-                delay((10000/autoClickerLevel).toLong())
+                delay((5000/autoClickerLevel).toLong())
                 addCurrency()
             }
         }
