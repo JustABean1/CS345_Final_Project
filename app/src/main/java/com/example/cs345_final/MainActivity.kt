@@ -70,10 +70,11 @@ class ClickerViewModel : ViewModel() {
 
     // Passive Income upgrade
     private var _passiveupgrade = mutableStateOf(0)
+    private var _passiveLevel = mutableStateOf(0)
     private val _passiveCostBase = mutableStateOf(6)
     private val _passiveMultiplier = mutableStateOf(4)
     val passiveUpgrade: Int get() = _passiveupgrade.value
-    //cost of upgrading passive is base*magic^number of upgrades
+    //cost of upgrading passive is base*mult^number of upgrades
     val passiveCost: Int get() = (_passiveCostBase.value * _passiveMultiplier.value.toDouble().pow(_passiveLevel.value)).toInt()
 
     init {
@@ -93,7 +94,13 @@ class ClickerViewModel : ViewModel() {
 
     }
     fun buyPassiveUpgrade() {
-        _passiveupgrade.value += 1
+        //if enough money, subtract the cost and then upgrade
+        if (_currency.value >= passiveCost) {
+            _currency.value -= passiveCost
+            _passiveupgrade.value += _passiveupgrade.value/10 + 1 //don't love leaving a magic number here but oh well
+            _passiveLevel.value++
+        }
+
     }
 
     private fun startPassiveIncome() {
@@ -178,7 +185,7 @@ fun ClickerScreen(viewModel: ClickerViewModel) {
                         .fillMaxWidth()
                         .padding(top = 16.dp)
                 ) {
-                    Text("Buy Upgrade Click (+${viewModel.upgrade}/Click)")
+                    Text("Buy Upgrade Click (+${viewModel.valueUpgrade}/Click)")
 
                 }
 
