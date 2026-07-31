@@ -148,10 +148,9 @@ class ClickerViewModel : ViewModel() {
     }
 
     fun calcIncome(): Int {
-        if (autoClickerLevel > 0) {
-            return ((5000 / autoClickerLevel) / 5 * _valueUpgrade.value) + (passiveUpgrade)
-        }
-        return passiveUpgrade
+        val autoIncome = (autoClickerLevel * valueUpgrade) / 5
+
+        return autoIncome + passiveUpgrade
     }
 
 }
