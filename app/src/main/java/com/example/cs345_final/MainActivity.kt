@@ -103,7 +103,8 @@ class ClickerViewModel : ViewModel() {
         //if enough money, subtract the cost and then upgrade
         if (_currency.value >= valueCost) {
             _currency.value -= valueCost
-            _autoClickerLevel.value++
+            _valueUpgrade.value += _valueUpgrade.value/10 + 1 //don't love leaving a magic number here but oh well
+            _valueLevel.value++
         }
 
     }
