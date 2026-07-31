@@ -148,14 +148,13 @@ fun ClickerScreen(viewModel: ClickerViewModel) {
                         text = "Currency: ${viewModel.currency}",
                         style = MaterialTheme.typography.headlineMedium,
                         color = Color.White
-
                     )
 
                     // Passive income
                     Text(
                         text = "${viewModel.passiveUpgrade} / sec",
                         style = MaterialTheme.typography.titleLarge,
-                        color = Color.White
+                        color = Color.Green
                     )
                 }
             }
