@@ -50,14 +50,18 @@ class ClickerViewModel : ViewModel() {
     private var _currency = mutableStateOf(0)
     val currency: Int get() = _currency.value
 
-    private var _upgrade = mutableStateOf(1)
-    val upgrade: Int get() = _upgrade.value
+    private var _valueUpgrade = mutableStateOf(1)
+    val valueUpgrade: Int get() = _valueUpgrade.value
+
+
+
     fun addCurrency() {
-        _currency.value += _upgrade.value
+        _currency.value += _valueUpgrade.value
     }
-    fun buyUpgrade() {
-        _upgrade.value += 1
+    fun buyValueUpgrade() {
+        _valueUpgrade.value += 1
     }
+
 }
 
 @Composable
@@ -88,7 +92,7 @@ fun ClickerScreen(viewModel: ClickerViewModel) {
                     .fillMaxWidth()
                     .height(80.dp)
             ) {
-                Text("$ ${viewModel.upgrade}")
+                Text("$ ${viewModel.valueUpgrade}")
             }
 
             // upgrades
@@ -96,12 +100,12 @@ fun ClickerScreen(viewModel: ClickerViewModel) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "upgrade: ${viewModel.upgrade}",
+                    text = "upgrade: ${viewModel.valueUpgrade}",
                     style = MaterialTheme.typography.titleLarge
                 )
 
                 Button(
-                    onClick = {viewModel.buyUpgrade()},
+                    onClick = {viewModel.buyValueUpgrade()},
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp)
