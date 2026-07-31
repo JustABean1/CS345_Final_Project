@@ -34,6 +34,7 @@ import com.example.cs345_final.ui.theme.CS345_FinalTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.*
+import kotlin.time.toDuration
 
 class MainActivity : ComponentActivity() {
 
@@ -66,7 +67,7 @@ class ClickerViewModel : ViewModel() {
     val valueUpgrade: Int get() = _valueUpgrade.value
     val valueLevel: Int get() = _valueLevel.value
     //cost of upgrading value is base*mult^number of upgrades
-    val valueCost: Int get() = (_valueCostBase.value * _valueMultiplier.value.toDouble().pow(_valueLevel.value)).toInt()
+    val valueCost: Int get() = calcCost(_valueCostBase.value, _valueMultiplier.value, _valueLevel.value)
 
     // Passive Income upgrade
     private var _passiveupgrade = mutableStateOf(0)
@@ -75,7 +76,17 @@ class ClickerViewModel : ViewModel() {
     private val _passiveMultiplier = mutableStateOf(4)
     val passiveUpgrade: Int get() = _passiveupgrade.value
     //cost of upgrading passive is base*mult^number of upgrades
-    val passiveCost: Int get() = (_passiveCostBase.value * _passiveMultiplier.value.toDouble().pow(_passiveLevel.value)).toInt()
+    val passiveCost: Int get() = calcCost(_passiveCostBase.value, _passiveMultiplier.value, _passiveLevel.value)
+
+    //Autoclicker vars
+    private var _autoClickerLevel = mutableStateOf(0)
+    private val _autoCostBase = mutableStateOf(9)
+    private val _autoMultiplier = mutableStateOf(9)
+    val autoClickerLevel: Int get() = _autoClickerLevel.value
+    //cost of upgrading auto is base*mult^number of upgrades
+    val autoCost: Int get() = calcCost(_autoCostBase.value, _autoMultiplier.value, _autoClickerLevel.value)
+
+
 
     init {
         startPassiveIncome()
@@ -84,12 +95,13 @@ class ClickerViewModel : ViewModel() {
     fun addCurrency() {
         _currency.value += _valueUpgrade.value
     }
+
+    fun calcCost(base: Int, mult: Int, level: Int): Int = (base * mult.toDouble().pow(level)).toInt()
     fun buyValueUpgrade() {
         //if enough money, subtract the cost and then upgrade
         if (_currency.value >= valueCost) {
             _currency.value -= valueCost
-            _valueUpgrade.value += _valueUpgrade.value/10 + 1 //don't love leaving a magic number here but oh well
-            _valueLevel.value++
+            _autoClickerLevel.value++
         }
 
     }
@@ -103,11 +115,31 @@ class ClickerViewModel : ViewModel() {
 
     }
 
+    fun buyAutoUpgrade() {
+        //if enough money, subtract the cost and then upgrade
+        if (_currency.value >= autoCost) {
+            _currency.value -= autoCost
+            _autoClickerLevel.value++
+        }
+        //not starting a while(true) loop until a delay is valid
+        if (autoClickerLevel == 1) startAuto()
+
+    }
+
     private fun startPassiveIncome() {
         viewModelScope.launch {
             while (true) {
                 delay(1000)
                 _currency.value += _passiveupgrade.value
+            }
+        }
+    }
+
+    private fun startAuto() {
+        viewModelScope.launch {
+            while (true) {
+                delay((10000/autoClickerLevel).toLong())
+                addCurrency()
             }
         }
     }
