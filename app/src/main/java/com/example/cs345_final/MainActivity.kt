@@ -106,6 +106,11 @@ fun ClickerScreen(viewModel: ClickerViewModel) {
                 style = MaterialTheme.typography.headlineMedium
             )
 
+            Text(
+                text = "${viewModel.passiveUpgrade} / sec",
+                style = MaterialTheme.typography.titleLarge
+            )
+
             // Button
             Button(
                 onClick = {viewModel.addCurrency() },
@@ -120,10 +125,7 @@ fun ClickerScreen(viewModel: ClickerViewModel) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "upgrade: ${viewModel.upgrade}",
-                    style = MaterialTheme.typography.titleLarge
-                )
+
 
                 Button(
                     onClick = {viewModel.buyUpgrade()},
@@ -131,23 +133,17 @@ fun ClickerScreen(viewModel: ClickerViewModel) {
                         .fillMaxWidth()
                         .padding(top = 16.dp)
                 ) {
-                    Text("Buy Upgrade (+1/Click")
+                    Text("Buy Upgrade Click (+${viewModel.upgrade}/Click)")
+
                 }
 
-                Spacer(modifier = Modifier.height(32.dp))
-
-                // Passive upgrade
-                Text(
-                    text = "${viewModel.passiveUpgrade} / sec",
-                    style = MaterialTheme.typography.titleLarge
-                )
                 Button(
                     onClick = {viewModel.butPassiveUpgrade()},
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp)
                 ) {
-                    Text("Upgrade Passive (+1/Sec")
+                    Text("Buy Upgrade Passive (+${viewModel.passiveUpgrade}/Sec)")
                 }
             }
 
