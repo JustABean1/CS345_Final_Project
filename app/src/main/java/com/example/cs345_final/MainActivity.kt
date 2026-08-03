@@ -88,6 +88,8 @@ class ClickerViewModel : ViewModel() {
     //cost of upgrading auto is base*mult^number of upgrades
     val autoCost: Int get() = calcCost(_autoCostBase.value, _autoMultiplier.value, _autoClickerLevel.value)
 
+    val calcIncome: Double get() = (autoClickerLevel * valueUpgrade).toDouble() / 4 + passiveUpgrade
+
 
 
     init {
@@ -147,12 +149,6 @@ class ClickerViewModel : ViewModel() {
         }
     }
 
-    fun calcIncome(): Int {
-        val autoIncome = (autoClickerLevel * valueUpgrade) / 5
-
-        return autoIncome + passiveUpgrade
-    }
-
 }
 
 @Composable
@@ -193,7 +189,7 @@ fun ClickerScreen(viewModel: ClickerViewModel) {
                     )
 
                     Text(
-                        text = "${viewModel.calcIncome()} / sec",
+                        text = "${viewModel.calcIncome} / sec",
                         style = MaterialTheme.typography.titleLarge,
                         color = Color.Green
                     )
@@ -218,7 +214,8 @@ fun ClickerScreen(viewModel: ClickerViewModel) {
             ) {
 
                 Text(
-                    "$ ${viewModel.valueUpgrade}"
+                    text = "$${viewModel.valueUpgrade}",
+                    style = MaterialTheme.typography.headlineSmall
                 )
             }
 
